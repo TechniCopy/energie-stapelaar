@@ -807,22 +807,30 @@ function StartScreen({ onStart }) {
   return (
     <div className="flex-1 flex flex-col">
       {/* Title bar */}
-      <div className="py-3 px-5 text-center relative" style={{ background: GRAD }}>
-        <img src="/studium-beeldmerk.png" alt="Studium" className="h-6 w-auto absolute left-5 top-1/2 -translate-y-1/2" />
-        <span className="text-white font-bold italic text-lg">De Energie-Stapelaar</span>
+      <div className="h-[60px] flex items-center px-4 flex-shrink-0" style={{ background: GRAD }}>
+        <img src="/studium-beeldmerk.png" alt="Studium" className="h-9 w-auto" />
       </div>
       {/* Content */}
-      <div className="flex-1 flex flex-col items-center justify-center gap-5 p-8">
-        <div className="rounded-full p-7 border-4" style={{ background: GRAD, borderColor: "#99D3D8" }}>
-          <Flame className="w-20 h-20 text-white" />
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="text-center max-w-lg">
+          <h1 className="text-4xl font-extrabold mb-2" style={{ color: '#0D4868' }}>De Energie-Stapelaar</h1>
+          <h2 className="text-xl font-bold italic mb-6" style={{ color: '#5b7280' }}>Energie bij faseovergangen</h2>
+          <div className="bg-white rounded-2xl p-6 mb-6" style={{ border: '2px solid #0D4868', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+            <p className="italic leading-relaxed" style={{ color: '#5b7280', lineHeight: 1.7 }}>
+              Ontdek wat er met <strong>energie</strong> gebeurt bij <strong>faseovergangen</strong>. Verwarm <strong>ijs</strong> tot <strong>stoom</strong> en stapel de <strong>energieblokjes</strong> die elke stap kost.
+            </p>
+          </div>
+          <div className="inline-flex items-center justify-center w-32 h-20 rounded-lg mb-6" style={{ background: '#f8fbfc', border: '2px solid #0D4868', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))' }}>
+            <Flame className="w-10 h-10" style={{ color: '#0D4868' }} />
+          </div>
+          <div>
+            <button onClick={onStart}
+              className="px-10 py-4 text-white rounded-2xl font-extrabold italic text-xl cursor-pointer transition-all hover:brightness-90 active:scale-95"
+              style={{ background: '#1E8F6E', border: '3px solid #0D4868', boxShadow: '0 4px 0 #166F56' }}>
+              Start de game
+            </button>
+          </div>
         </div>
-        <h1 className="text-3xl font-bold italic" style={{ color: C.brownText }}>De Energie-Stapelaar</h1>
-        <p className="max-w-sm text-center font-medium" style={{ color: C.brown }}>
-          Ontdek wat er met <strong>energie</strong> gebeurt bij <strong>faseovergangen</strong>
-        </p>
-        <GameButton onClick={onStart}>
-          Start de game
-        </GameButton>
       </div>
     </div>
   );
