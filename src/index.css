@@ -2,6 +2,9 @@
 
 body {
   margin: 0;
+  font-family: 'Work Sans', 'Segoe UI', Arial, sans-serif;
+  color: #12303f;
+  background: #f2f7f8;
 }
 
 @keyframes shake {

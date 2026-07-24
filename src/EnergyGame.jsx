@@ -130,7 +130,7 @@ function ConfettiBurst({ x, y, onDone }) {
       vx: (Math.random() - 0.5) * 12,
       vy: (Math.random() - 0.5) * 12 - 4,
       size: 4 + Math.random() * 4,
-      color: ["#FBBF24", "#4A7C3F", "#E74C3C", "#3B82F6", "#FDBA74", "#67E8F9"][Math.floor(Math.random() * 6)],
+      color: ["#30B5AE", "#1E8F6E", "#99D3D8", "#0D4868", "#FBBF24", "#E08A00"][Math.floor(Math.random() * 6)],
       rotation: Math.random() * 360,
       rotSpeed: (Math.random() - 0.5) * 20,
     }));
@@ -182,7 +182,7 @@ function StreakIndicator({ streak }) {
   return (
     <div className="fixed top-20 right-4 z-[90] animate-bounce">
       <div className="rounded-xl px-4 py-2 shadow-lg border-2 font-bold italic text-sm"
-        style={{ backgroundColor: "#FBBF24", borderColor: C.brownText, color: C.brownText }}>
+        style={{ backgroundColor: "#99D3D8", borderColor: "#0D4868", color: "#0D4868" }}>
         {streak}x op rij! {streak >= 5 ? "ONSTOPBAAR!" : streak >= 3 ? "COMBO!" : ""}
       </div>
     </div>
@@ -249,19 +249,21 @@ function useGameJuice() {
 
 // ─── THEME COLORS ───
 
+const GRAD = "linear-gradient(120deg,#0D4868 0%,#1b7f96 55%,#30B5AE 100%)";
+
 const C = {
-  bgPage: "#F5E6D3",
-  bgCard: "#FFF8F0",
-  bgHeader: "#3B2415",
-  brown: "#6B4F1D",
-  brownDark: "#5A4018",
-  brownText: "#3B2415",
-  green: "#4A7C3F",
-  greenLight: "#E8F5E3",
-  red: "#C0392B",
+  bgPage: "#f2f7f8",
+  bgCard: "#ffffff",
+  bgHeader: "#0D4868",
+  brown: "#5b7280",
+  brownDark: "#0D4868",
+  brownText: "#0D4868",
+  green: "#1E8F6E",
+  greenLight: "#E6F4EF",
+  red: "#D92C2C",
   redLight: "#FDEAEA",
-  beigeMid: "#D4C4B0",
-  beigeLight: "#F0E4D4",
+  beigeMid: "#dbe7ea",
+  beigeLight: "#eaf3f5",
 };
 
 // ─── DATA CONSTANTS ───
@@ -314,7 +316,7 @@ const QUIZ_QUESTIONS = [
       "Water koelt sneller af",
     ],
     correct: 1,
-    feedbackCorrect: "Juist! Bij condensatie wordt stoom weer water en komt al die latente warmte (2257 kJ per kg!) in één keer vrij. Dáárom geeft stoom zoveel ernstigere brandwonden.",
+    feedbackCorrect: "Juist! Bij condensatie wordt stoom weer water en komt al die latente warmte (2257 kJ per kg!) in een keer vrij. Daarom geeft stoom zoveel ernstigere brandwonden.",
     feedbackWrong: "Stoom en water van 100°C hebben dezelfde temperatuur. Maar stoom bevat ook nog eens 2257 kJ/kg extra. Als stoom condenseert op je huid, komt al die energie vrij.",
   },
 ];
@@ -362,7 +364,7 @@ function ProgressBar({ currentMission, currentRound, score, lives }) {
   }, [score]);
 
   return (
-    <div className="flex items-center justify-between py-3 px-5" style={{ backgroundColor: C.bgHeader }}>
+    <div className="flex items-center justify-between py-3 px-5" style={{ background: GRAD }}>
       <div className="flex items-center gap-4">
         <span className="text-white font-bold text-sm">Ronde:</span>
         <div className="flex gap-1.5">
@@ -377,11 +379,11 @@ function ProgressBar({ currentMission, currentRound, score, lives }) {
                   key={`${m}-${r}`}
                   className="w-5 h-5 rounded-full border-2 flex items-center justify-center text-[9px] font-bold transition-all duration-300"
                   style={{
-                    backgroundColor: isComplete ? C.brownText : isCurrent ? C.brownText : "transparent",
-                    borderColor: isComplete || isCurrent ? C.brownText : C.beigeMid,
+                    backgroundColor: isComplete || isCurrent ? "#ffffff" : "transparent",
+                    borderColor: isComplete || isCurrent ? "#ffffff" : "#99D3D8",
                   }}
                 >
-                  {isComplete && <span className="text-white text-[8px]">&#10003;</span>}
+                  {isComplete && <span className="text-[8px]" style={{ color: "#0D4868" }}>&#10003;</span>}
                 </div>
               );
             })
@@ -394,15 +396,15 @@ function ProgressBar({ currentMission, currentRound, score, lives }) {
             <Heart
               key={h}
               className="w-4 h-4 transition-all duration-300"
-              fill={h <= lives ? "#E74C3C" : "transparent"}
-              stroke={h <= lives ? "#E74C3C" : "#8B7355"}
+              fill={h <= lives ? "#D92C2C" : "transparent"}
+              stroke={h <= lives ? "#D92C2C" : "#99D3D8"}
               style={{ opacity: h <= lives ? 1 : 0.3 }}
             />
           ))}
         </div>
         <span className="text-white font-bold text-sm">Score: <span
           className="text-lg inline-block transition-transform duration-200"
-          style={{ transform: scorePop ? "scale(1.5)" : "scale(1)", color: scorePop ? "#FBBF24" : "white" }}
+          style={{ transform: scorePop ? "scale(1.5)" : "scale(1)", color: scorePop ? "#99D3D8" : "white" }}
         >{displayScore}</span></span>
       </div>
     </div>
@@ -458,7 +460,7 @@ function EnergyBarComponent({ phases, filledAmounts, activePhase = -1 }) {
           return (
             <div
               key={i}
-              className={`relative ${activePhase === i ? "ring-2 ring-amber-500 ring-inset z-10" : ""}`}
+              className={`relative ${activePhase === i ? "ring-2 ring-[#30B5AE] ring-inset z-10" : ""}`}
               style={{ width: `${widthPct}%` }}
             >
               <div
@@ -508,7 +510,7 @@ function FeedbackPopup({ type, text, onClose, buttonText = "Volgende" }) {
         className="w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl shadow-2xl p-6 transform transition-all duration-200"
         style={{
           backgroundColor: isCorrect ? C.green : C.red,
-          borderTop: `4px solid ${isCorrect ? "#3A6B30" : "#A93226"}`,
+          borderTop: `4px solid ${isCorrect ? "#166F56" : "#A81F1F"}`,
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -529,7 +531,7 @@ function FeedbackPopup({ type, text, onClose, buttonText = "Volgende" }) {
           onClick={onClose}
           className="w-full py-2.5 rounded-xl font-bold text-sm transition-colors"
           style={{
-            backgroundColor: isCorrect ? "#3A6B30" : "#A93226",
+            backgroundColor: isCorrect ? "#166F56" : "#A81F1F",
             color: "white",
           }}
         >
@@ -550,11 +552,12 @@ function DragLabel({ name, onDragStart, disabled }) {
         e.dataTransfer.setData("text/plain", name);
         onDragStart?.(name);
       }}
-      className="px-5 py-2.5 rounded-xl font-bold text-sm select-none cursor-grab active:cursor-grabbing shadow-md border-2 transition-all italic"
+      className="px-5 py-2.5 rounded-xl font-bold text-sm select-none cursor-grab active:cursor-grabbing border-2 transition-all italic"
       style={{
         backgroundColor: disabled ? C.beigeMid : C.green,
-        color: disabled ? "#8B7355" : "white",
-        borderColor: disabled ? "#B8A990" : "#3A6B30",
+        color: disabled ? "#7d94a3" : "white",
+        borderColor: disabled ? "#c9dade" : "#166F56",
+        boxShadow: disabled ? "none" : "0 3px 0 #166F56",
         opacity: disabled ? 0.5 : 1,
         cursor: disabled ? "default" : undefined,
       }}
@@ -600,19 +603,19 @@ function DropZone({ expected, value, onDrop, label }) {
         backgroundColor: value
           ? C.greenLight
           : hover
-          ? "#FFF0D6"
+          ? "#E7F4F3"
           : flash === "incorrect"
           ? C.redLight
           : C.bgCard,
         borderColor: value
           ? C.green
           : hover
-          ? C.brown
+          ? "#30B5AE"
           : flash === "incorrect"
           ? C.red
           : C.beigeMid,
         borderStyle: value ? "solid" : "dashed",
-        color: value ? C.green : C.beigeMid,
+        color: value ? C.green : "#7d94a3",
       }}
     >
       {value ? (
@@ -621,7 +624,7 @@ function DropZone({ expected, value, onDrop, label }) {
           {value.charAt(0).toUpperCase() + value.slice(1)}
         </span>
       ) : (
-        <span style={{ color: C.beigeMid }}>{label || "Sleep hier"}</span>
+        <span style={{ color: "#7d94a3" }}>{label || "Sleep hier"}</span>
       )}
     </div>
   );
@@ -769,10 +772,10 @@ function PhaseTriangle({ transitions, answers, onDrop }) {
 
 function GameButton({ onClick, children, variant = "primary", disabled = false, className = "" }) {
   const styles = {
-    primary: { backgroundColor: C.brown, hoverBg: C.brownDark, color: "white" },
-    green: { backgroundColor: C.green, hoverBg: "#3A6B30", color: "white" },
-    secondary: { backgroundColor: C.beigeMid, hoverBg: "#C4B4A0", color: C.brownText },
-    danger: { backgroundColor: C.red, hoverBg: "#A93226", color: "white" },
+    primary: { backgroundColor: "#30B5AE", hoverBg: "#2AA39D", color: "white", shadow: "0 3px 0 #1F8A84" },
+    green: { backgroundColor: C.green, hoverBg: "#17795C", color: "white", shadow: "0 3px 0 #166F56" },
+    secondary: { backgroundColor: C.beigeMid, hoverBg: "#c9dade", color: C.brownText, shadow: "0 3px 0 #b9cdd2" },
+    danger: { backgroundColor: C.red, hoverBg: "#B02121", color: "white", shadow: "0 3px 0 #A81F1F" },
   };
   const s = styles[variant];
 
@@ -780,13 +783,14 @@ function GameButton({ onClick, children, variant = "primary", disabled = false, 
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`px-8 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-md border-2 ${
-        disabled ? "opacity-40 cursor-not-allowed" : "hover:shadow-lg active:scale-[0.98]"
+      className={`px-8 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 border-2 ${
+        disabled ? "opacity-40 cursor-not-allowed" : "active:scale-[0.98]"
       } ${className}`}
       style={{
         backgroundColor: disabled ? C.beigeMid : s.backgroundColor,
-        borderColor: disabled ? "#B8A990" : s.backgroundColor,
-        color: disabled ? "#8B7355" : s.color,
+        borderColor: disabled ? "#c9dade" : s.backgroundColor,
+        color: disabled ? "#7d94a3" : s.color,
+        boxShadow: disabled ? "none" : s.shadow,
       }}
       onMouseEnter={(e) => { if (!disabled) e.target.style.backgroundColor = s.hoverBg; }}
       onMouseLeave={(e) => { if (!disabled) e.target.style.backgroundColor = s.backgroundColor; }}
@@ -802,13 +806,13 @@ function StartScreen({ onStart }) {
   return (
     <div className="flex-1 flex flex-col">
       {/* Title bar */}
-      <div className="py-3 px-5 text-center" style={{ backgroundColor: C.bgHeader }}>
+      <div className="py-3 px-5 text-center" style={{ background: GRAD }}>
         <span className="text-white font-bold italic text-lg">De Energie-Stapelaar</span>
       </div>
       {/* Content */}
       <div className="flex-1 flex flex-col items-center justify-center gap-5 p-8">
-        <div className="rounded-full p-7 border-4" style={{ backgroundColor: C.beigeLight, borderColor: C.brownText }}>
-          <Flame className="w-20 h-20" style={{ color: C.brownText }} />
+        <div className="rounded-full p-7 border-4" style={{ background: GRAD, borderColor: "#99D3D8" }}>
+          <Flame className="w-20 h-20 text-white" />
         </div>
         <h1 className="text-3xl font-bold italic" style={{ color: C.brownText }}>De Energie-Stapelaar</h1>
         <p className="max-w-sm text-center font-medium" style={{ color: C.brown }}>
@@ -1023,7 +1027,7 @@ function M1R3({ onComplete, addScore, loseLife }) {
 
   const columnStyle = (color) => ({
     borderColor: color,
-    backgroundColor: color === "#C0392B" ? "#FDF2F0" : "#F0F7EE",
+    backgroundColor: color === "#D92C2C" ? "#FDF2F0" : "#F0F7EE",
   });
 
   return (
@@ -1409,14 +1413,14 @@ function M2R1({ onComplete, addScore, loseLife }) {
                     : quizChecked && quizAnswer === i && i !== 1
                     ? C.redLight
                     : quizAnswer === i
-                    ? "#FFF0D6"
+                    ? "#E7F4F3"
                     : C.bgCard,
                   borderColor: quizChecked && i === 1
                     ? C.green
                     : quizChecked && quizAnswer === i && i !== 1
                     ? C.red
                     : quizAnswer === i
-                    ? C.brown
+                    ? "#30B5AE"
                     : C.beigeMid,
                   color: C.brownText,
                 }}
@@ -1587,7 +1591,7 @@ function M2R2({ onComplete, addScore, loseLife }) {
               </div>
             ))}
             {blocksPlaced > 80 && <span className="text-xs font-bold" style={{ color: C.brown }}>+{blocksPlaced - 80}</span>}
-            {blocksPlaced === 0 && <span className="text-xs" style={{ color: C.beigeMid }}>Sleep blokjes hierheen of gebruik +/-</span>}
+            {blocksPlaced === 0 && <span className="text-xs" style={{ color: "#7d94a3" }}>Sleep blokjes hierheen of gebruik +/-</span>}
           </div>
         </div>
 
@@ -1700,14 +1704,14 @@ function M2R3({ onComplete, addScore, loseLife }) {
                   : checked && selected === i && i !== q.correct
                   ? C.redLight
                   : selected === i
-                  ? "#FFF0D6"
+                  ? "#E7F4F3"
                   : C.bgCard,
                 borderColor: checked && i === q.correct
                   ? C.green
                   : checked && selected === i && i !== q.correct
                   ? C.red
                   : selected === i
-                  ? C.brown
+                  ? "#30B5AE"
                   : C.beigeMid,
                 color: C.brownText,
               }}
