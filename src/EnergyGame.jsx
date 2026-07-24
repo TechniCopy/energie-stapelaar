@@ -292,12 +292,12 @@ const QUIZ_QUESTIONS = [
   {
     question: "Welke bevat meer energie: 1 kg water van 100°C of 1 kg stoom van 100°C?",
     options: [
-      "Water — want vloeibaar is zwaarder",
-      "Stoom — want daar is verdampingsenergie aan toegevoegd",
-      "Allebei evenveel — want dezelfde temperatuur",
+      "Water, want vloeibaar is zwaarder",
+      "Stoom, want daar is verdampingsenergie aan toegevoegd",
+      "Allebei evenveel, want dezelfde temperatuur",
     ],
     correct: 1,
-    feedbackCorrect: "Precies! Stoom van 100°C bevat veel meer energie dan water van 100°C. Daarom is stoom zo gevaarlijk — al die extra energie komt vrij als de stoom condenseert op je huid.",
+    feedbackCorrect: "Precies! Stoom van 100°C bevat veel meer energie dan water van 100°C. Daarom is stoom zo gevaarlijk: al die extra energie komt vrij als de stoom condenseert op je huid.",
     feedbackWrong: "Dezelfde temperatuur betekent niet dezelfde hoeveelheid energie! Denk terug aan alle blokjes die je moest slepen om water te verdampen.",
   },
   {
@@ -322,11 +322,11 @@ const QUIZ_QUESTIONS = [
 ];
 
 const ANIM_STEP_TEXTS = [
-  "Het ijs warmt op van -20°C naar 0°C. De temperatuur stijgt — dat voel je. Dit noemen we voelbare warmte.",
-  "We zijn op 0°C. Het ijs begint te smelten. Kijk naar de thermometer — die staat stil! Maar de energiebalk loopt gewoon door. Alle energie gaat nu naar het smelten. Dit noemen we latente warmte.",
-  "Al het ijs is gesmolten. Nu warmt het water op van 0°C naar 100°C. De thermometer stijgt weer.",
-  "We zijn op 100°C. Het water begint te verdampen. Weer staat de thermometer stil! Maar kijk eens hoeveel energie er nodig is... Veel meer dan bij het smelten! Dit is de latente verdampingswarmte.",
-  "Alle water is nu stoom. De temperatuur stijgt weer naar 120°C.",
+  <>Het ijs warmt op van -20°C naar 0°C. De <strong>temperatuur stijgt</strong> — dat voel je. Dit noemen we <strong>voelbare warmte</strong>.</>,
+  <>We zijn op 0°C. Het ijs begint te <strong>smelten</strong>. Kijk naar de thermometer — die <strong>staat stil</strong>! Maar de energiebalk loopt gewoon door. Alle energie gaat nu naar het smelten. Dit noemen we <strong>latente warmte</strong>.</>,
+  <>Al het ijs is <strong>gesmolten</strong>. Nu warmt het water op van 0°C naar 100°C. De thermometer <strong>stijgt weer</strong>.</>,
+  <>We zijn op 100°C. Het water begint te <strong>verdampen</strong>. Weer staat de thermometer <strong>stil</strong>! Maar kijk eens hoeveel energie er nodig is... Veel meer dan bij het smelten! Dit is de <strong>latente verdampingswarmte</strong>.</>,
+  <>Alle water is nu <strong>stoom</strong>. De temperatuur stijgt weer naar 120°C.</>,
 ];
 
 const PHASE_MARGINS = [
@@ -337,7 +337,7 @@ const PHASE_FEEDBACK = [
   null,
   "Goed! 7 blokjes om ijs te smelten. Best veel, toch? Maar wacht tot je bij het verdampen komt...",
   null,
-  "Wow — 45 blokjes! Dat is meer dan 5 keer zoveel als alle vorige stappen bij elkaar! En toch bleef de thermometer op 100°C staan. Dat is de kracht van latente warmte.",
+  "Wow: 45 blokjes! Dat is meer dan 5 keer zoveel als alle vorige stappen bij elkaar! En toch bleef de thermometer op 100°C staan. Dat is de kracht van latente warmte.",
   null,
 ];
 
@@ -818,7 +818,7 @@ function StartScreen({ onStart }) {
         </div>
         <h1 className="text-3xl font-bold italic" style={{ color: C.brownText }}>De Energie-Stapelaar</h1>
         <p className="max-w-sm text-center font-medium" style={{ color: C.brown }}>
-          Ontdek wat er met energie gebeurt bij faseovergangen
+          Ontdek wat er met <strong>energie</strong> gebeurt bij <strong>faseovergangen</strong>
         </p>
         <GameButton onClick={onStart}>
           Start de game
@@ -885,7 +885,7 @@ function M1R1({ onComplete, addScore, loseLife }) {
     <div className="flex-1 flex flex-col items-center p-6">
       <h2 className="text-xl font-bold italic mb-2" style={{ color: C.brownText }}>Ronde 1: Basisovergangen</h2>
       <p className="text-sm mb-6 max-w-md text-center font-medium" style={{ color: C.brown }}>
-        Sleep het juiste woord naar de pijl tussen de twee toestanden.
+        <strong>Sleep</strong> het juiste woord naar de <strong>pijl</strong> tussen de twee toestanden.
       </p>
 
       <PhaseTriangle
@@ -905,7 +905,7 @@ function M1R1({ onComplete, addScore, loseLife }) {
       {showFeedback && (
         <FeedbackPopup
           type="correct"
-          text="Goed gedaan! Smelten, verdampen en stollen — dat zijn de drie basisovergangen die je het meest tegenkomt."
+          text="Goed gedaan! Smelten, verdampen en stollen: dat zijn de drie basisovergangen die je het meest tegenkomt."
           onClose={onComplete}
         />
       )}
@@ -951,7 +951,7 @@ function M1R2({ onComplete, addScore, loseLife }) {
     <div className="flex-1 flex flex-col items-center p-6">
       <h2 className="text-xl font-bold italic mb-2" style={{ color: C.brownText }}>Ronde 2: Alle zes faseovergangen</h2>
       <p className="text-sm mb-6 max-w-md text-center font-medium" style={{ color: C.brown }}>
-        Nu alle zes! Sleep elk woord naar de juiste pijl.
+        Nu <strong>alle zes</strong>! Sleep elk woord naar de <strong>juiste pijl</strong>.
       </p>
 
       <PhaseTriangle
@@ -1036,7 +1036,7 @@ function M1R3({ onComplete, addScore, loseLife }) {
     <div className="flex-1 flex flex-col items-center p-6">
       <h2 className="text-xl font-bold italic mb-2" style={{ color: C.brownText }}>Ronde 3: Energie richting</h2>
       <p className="text-sm mb-6 max-w-md text-center font-medium" style={{ color: C.brown }}>
-        Sleep elke faseovergang naar de juiste kolom.
+        Sleep elke <strong>faseovergang</strong> naar de <strong>juiste kolom</strong>.
       </p>
 
       <div className="flex gap-4 mb-6 w-full max-w-lg">
@@ -1105,7 +1105,7 @@ function M1R3({ onComplete, addScore, loseLife }) {
       {showFeedback && (
         <FeedbackPopup
           type="correct"
-          text="Precies! Verdampen, smelten en sublimeren kosten energie. Condenseren, stollen en rijpen geven energie af. Onthoud dit goed — het is de basis voor missie 2!"
+          text="Precies! Verdampen, smelten en sublimeren kosten energie. Condenseren, stollen en rijpen geven energie af. Onthoud dit goed: het is de basis voor missie 2!"
           onClose={onComplete}
           buttonText="Naar missie 2"
         />
@@ -1374,7 +1374,7 @@ function M2R1({ onComplete, addScore, loseLife }) {
     <div className="flex-1 flex flex-col items-center p-6">
       <h2 className="text-xl font-bold italic mb-2" style={{ color: C.brownText }}>Ronde 1: Het experiment</h2>
       <p className="text-sm mb-4 max-w-md text-center font-medium" style={{ color: C.brown }}>
-        Bekijk hoe 1 kg ijs van -20°C wordt opgewarmd naar stoom van 120°C.
+        Bekijk hoe 1 kg <strong>ijs van -20°C</strong> wordt opgewarmd naar <strong>stoom van 120°C</strong>.
       </p>
 
       <HeatingCurveGraph phase={phase} progress={progress} />
@@ -1439,7 +1439,7 @@ function M2R1({ onComplete, addScore, loseLife }) {
           {quizChecked && quizAnswer === 1 && (
             <div className="mt-3">
               <p className="text-sm mb-3 italic font-medium" style={{ color: C.green }}>
-                Klopt! Het verdampen van water kost veruit de meeste energie — maar de temperatuur verandert niet! Dat is het bijzondere aan latente warmte.
+                Klopt! Het verdampen van water kost veruit de meeste energie, maar de temperatuur verandert niet! Dat is het bijzondere aan latente warmte.
               </p>
               <GameButton onClick={onComplete} variant="green" className="w-full">Volgende</GameButton>
             </div>
@@ -1536,7 +1536,7 @@ function M2R2({ onComplete, addScore, loseLife }) {
         <h2 className="text-xl font-bold italic" style={{ color: C.brownText }}>Alle fasen voltooid!</h2>
         <div className="border-2 rounded-2xl p-4 max-w-md" style={{ backgroundColor: C.bgCard, borderColor: C.brownText }}>
           <p className="text-sm text-center leading-relaxed italic" style={{ color: C.brownText }}>
-            Je hebt in totaal zo'n 3092 kJ nodig gehad. Bijna driekwart (2257 kJ) ging naar een ding: het verdampen. En dat zonder dat de temperatuur ook maar een graadje steeg!
+            Je hebt in totaal zo'n <strong>3092 kJ</strong> nodig gehad. Bijna driekwart (<strong>2257 kJ</strong>) ging naar een ding: het <strong>verdampen</strong>. En dat zonder dat de <strong>temperatuur</strong> ook maar een graadje steeg!
           </p>
         </div>
         <GameButton onClick={onComplete} variant="green">Volgende</GameButton>
@@ -1548,7 +1548,7 @@ function M2R2({ onComplete, addScore, loseLife }) {
     <div className="flex-1 flex flex-col items-center p-6">
       <h2 className="text-xl font-bold italic mb-2" style={{ color: C.brownText }}>Ronde 2: Zelf energie stapelen</h2>
       <p className="text-sm mb-4 max-w-md text-center font-medium" style={{ color: C.brown }}>
-        Sleep energieblokjes naar de balk om 1 kg ijs helemaal naar stoom te brengen.
+        Sleep <strong>energieblokjes</strong> naar de balk om 1 kg ijs helemaal naar <strong>stoom</strong> te brengen.
       </p>
 
       <div className="rounded-xl px-4 py-2 mb-4 text-sm font-bold border-2 italic" style={{ backgroundColor: C.bgCard, borderColor: C.brownText, color: C.brownText }}>
@@ -1686,7 +1686,7 @@ function M2R3({ onComplete, addScore, loseLife }) {
             </div>
           </div>
           <p className="text-sm text-center italic font-medium" style={{ color: C.brownText }}>
-            Hier staan twee 'stoffen' van 100°C: water en stoom. Dezelfde temperatuur. Maar is dat het hele verhaal?
+            Hier staan twee 'stoffen' van 100°C: <strong>water</strong> en <strong>stoom</strong>. <strong>Dezelfde temperatuur</strong>. Maar is dat het hele verhaal?
           </p>
         </div>
       )}
@@ -1770,7 +1770,7 @@ function EndScreen({ score, onRestart }) {
       <div className="text-5xl font-bold italic" style={{ color: C.brownText }}>{score}/100</div>
       <div className="border-2 rounded-2xl p-6 max-w-lg" style={{ backgroundColor: C.bgCard, borderColor: C.brownText }}>
         <p className="text-sm text-center leading-relaxed" style={{ color: C.brownText }}>
-          Gefeliciteerd! Je weet nu dat verdampen en condenseren niet zomaar faseovergangen zijn — er gaat een enorme hoeveelheid energie in om. Water van 100°C en stoom van 100°C hebben dezelfde temperatuur, maar stoom bevat ruim 2200 kJ per kg meer energie. Dit principe is de basis van hoe cv-ketels en warmtepompen werken.
+          Gefeliciteerd! Je weet nu dat <strong>verdampen en condenseren</strong> niet zomaar faseovergangen zijn: er gaat een enorme hoeveelheid energie in om. Water van 100°C en stoom van 100°C hebben <strong>dezelfde temperatuur</strong>, maar stoom bevat <strong>ruim 2200 kJ per kg meer energie</strong>. Dit principe is de basis van hoe <strong>cv-ketels en warmtepompen</strong> werken.
         </p>
       </div>
       <GameButton onClick={onRestart}>
@@ -1857,10 +1857,13 @@ export default function EnergyGame() {
         {screen === "mission2_intro" && (
           <IntroScreen
             title="Missie 2: Energie & Latente Warmte"
-            text="We gaan een experiment doen. Je hebt 1 kg ijs van -20°C. Jouw opdracht: breng het helemaal naar stoom van 120°C door er energie aan toe te voegen. Maar let goed op de thermometer — want die gaat iets raars doen!"
             buttonText="Bekijk het experiment"
             onNext={() => setScreen("m2r1")}
-          />
+          >
+            <p className="leading-relaxed text-center" style={{ color: C.brownText }}>
+              We gaan een experiment doen. Je hebt 1 kg ijs van -20°C. Jouw opdracht: breng het helemaal naar <strong>stoom van 120°C</strong> door er <strong>energie</strong> aan toe te voegen. Maar let goed op de <strong>thermometer</strong> — want die gaat iets raars doen!
+            </p>
+          </IntroScreen>
         )}
 
         {screen === "m2r1" && <M2R1 onComplete={() => setScreen("m2r2")} addScore={addScore} loseLife={loseLife} />}
