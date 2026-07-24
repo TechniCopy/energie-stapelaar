@@ -364,11 +364,11 @@ function ProgressBar({ currentMission, currentRound, score, lives }) {
   }, [score]);
 
   return (
-    <div className="flex items-center justify-between py-3 px-5" style={{ background: GRAD }}>
-      <div className="flex items-center gap-4">
-        <img src="/studium-beeldmerk.png" alt="Studium" className="h-6 w-auto" />
-        <span className="text-white font-bold text-sm">Ronde:</span>
-        <div className="flex gap-1.5">
+    <div className="flex items-center justify-between py-3 px-2 sm:px-5" style={{ background: GRAD }}>
+      <div className="flex items-center gap-1.5 sm:gap-4">
+        <img src="/studium-beeldmerk.png" alt="Studium" className="h-5 sm:h-6 w-auto" />
+        <span className="text-white font-bold text-xs sm:text-sm">Ronde:</span>
+        <div className="flex gap-1 sm:gap-1.5">
           {missions.map((m) =>
             rounds.map((r) => {
               const idx = (m - 1) * 3 + r;
@@ -378,7 +378,7 @@ function ProgressBar({ currentMission, currentRound, score, lives }) {
               return (
                 <div
                   key={`${m}-${r}`}
-                  className="w-5 h-5 rounded-full border-2 flex items-center justify-center text-[9px] font-bold transition-all duration-300"
+                  className="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center text-[9px] font-bold transition-all duration-300"
                   style={{
                     backgroundColor: isComplete || isCurrent ? "#ffffff" : "transparent",
                     borderColor: isComplete || isCurrent ? "#ffffff" : "#99D3D8",
@@ -391,19 +391,19 @@ function ProgressBar({ currentMission, currentRound, score, lives }) {
           )}
         </div>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
         <div className="flex gap-0.5">
           {[1, 2, 3, 4, 5].map((h) => (
             <Heart
               key={h}
-              className="w-4 h-4 transition-all duration-300"
+              className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-all duration-300"
               fill={h <= lives ? "#D92C2C" : "transparent"}
               stroke={h <= lives ? "#D92C2C" : "#99D3D8"}
               style={{ opacity: h <= lives ? 1 : 0.3 }}
             />
           ))}
         </div>
-        <span className="text-white font-bold text-sm">Score: <span
+        <span className="text-white font-bold text-sm whitespace-nowrap"><span className="hidden sm:inline">Score: </span><span
           className="text-lg inline-block transition-transform duration-200"
           style={{ transform: scorePop ? "scale(1.5)" : "scale(1)", color: scorePop ? "#99D3D8" : "white" }}
         >{displayScore}</span></span>
@@ -631,6 +631,40 @@ function DropZone({ expected, value, onDrop, label }) {
   );
 }
 
+// ─── SCALED STAGE (schaalt een vast ontworpen vlak mee met de beschikbare breedte) ───
+
+function ScaledStage({ designWidth, designHeight, className = "", children }) {
+  const outerRef = useRef(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const el = outerRef.current;
+    if (!el) return;
+    const update = () => {
+      const avail = el.clientWidth;
+      if (avail > 0) setScale(Math.min(1, avail / designWidth));
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, [designWidth]);
+
+  return (
+    <div ref={outerRef} className={`w-full flex justify-center ${className}`}>
+      <div style={{ width: designWidth * scale, height: designHeight * scale, overflow: "visible" }}>
+        <div style={{ width: designWidth, height: designHeight, transform: `scale(${scale})`, transformOrigin: "top left" }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── PHASE TRIANGLE ───
 
 function PhaseTriangle({ transitions, answers, onDrop }) {
@@ -700,7 +734,8 @@ function PhaseTriangle({ transitions, answers, onDrop }) {
   });
 
   return (
-    <div className="relative mx-auto mb-2" style={{ width: W, height: H + 25 }}>
+    <ScaledStage designWidth={W} designHeight={H + 25} className="mb-2">
+      <div className="relative" style={{ width: W, height: H + 25 }}>
       <svg width={W} height={H + 25} viewBox={`0 0 ${W} ${H + 25}`} className="absolute inset-0">
         <defs>
           <marker id="arrB" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
@@ -765,7 +800,8 @@ function PhaseTriangle({ transitions, answers, onDrop }) {
           </div>
         );
       })}
-    </div>
+      </div>
+    </ScaledStage>
   );
 }
 
@@ -890,7 +926,7 @@ function M1R1({ onComplete, addScore, loseLife }) {
   }, [answers]);
 
   return (
-    <div className="flex-1 flex flex-col items-center p-6">
+    <div className="flex-1 flex flex-col items-center px-2 py-6 sm:p-6">
       <h2 className="text-xl font-bold italic mb-2" style={{ color: C.brownText }}>Ronde 1: Basisovergangen</h2>
       <p className="text-sm mb-6 max-w-md text-center font-medium" style={{ color: C.brown }}>
         <strong>Sleep</strong> het juiste woord naar de <strong>pijl</strong> tussen de twee toestanden.
@@ -956,7 +992,7 @@ function M1R2({ onComplete, addScore, loseLife }) {
   }, [answers]);
 
   return (
-    <div className="flex-1 flex flex-col items-center p-6">
+    <div className="flex-1 flex flex-col items-center px-2 py-6 sm:p-6">
       <h2 className="text-xl font-bold italic mb-2" style={{ color: C.brownText }}>Ronde 2: Alle zes faseovergangen</h2>
       <p className="text-sm mb-6 max-w-md text-center font-medium" style={{ color: C.brown }}>
         Nu <strong>alle zes</strong>! Sleep elk woord naar de <strong>juiste pijl</strong>.
