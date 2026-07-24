@@ -366,6 +366,7 @@ function ProgressBar({ currentMission, currentRound, score, lives }) {
   return (
     <div className="flex items-center justify-between py-3 px-5" style={{ background: GRAD }}>
       <div className="flex items-center gap-4">
+        <img src="/studium-beeldmerk.png" alt="Studium" className="h-6 w-auto" />
         <span className="text-white font-bold text-sm">Ronde:</span>
         <div className="flex gap-1.5">
           {missions.map((m) =>
@@ -806,7 +807,8 @@ function StartScreen({ onStart }) {
   return (
     <div className="flex-1 flex flex-col">
       {/* Title bar */}
-      <div className="py-3 px-5 text-center" style={{ background: GRAD }}>
+      <div className="py-3 px-5 text-center relative" style={{ background: GRAD }}>
+        <img src="/studium-beeldmerk.png" alt="Studium" className="h-6 w-auto absolute left-5 top-1/2 -translate-y-1/2" />
         <span className="text-white font-bold italic text-lg">De Energie-Stapelaar</span>
       </div>
       {/* Content */}
