@@ -266,6 +266,12 @@ const C = {
   beigeLight: "#eaf3f5",
 };
 
+// True on touch devices; used to enlarge tap targets without changing the desktop layout
+const IS_COARSE =
+  typeof window !== "undefined" &&
+  typeof window.matchMedia === "function" &&
+  window.matchMedia("(pointer: coarse)").matches;
+
 // ─── DATA CONSTANTS ───
 
 const TRANSITIONS = [
@@ -545,7 +551,7 @@ function FeedbackPopup({ type, text, onClose, buttonText = "Volgende" }) {
 
 // ─── DRAG LABEL ───
 
-function DragLabel({ name, onDragStart, disabled }) {
+function DragLabel({ name, onDragStart, disabled, selected, onSelect }) {
   return (
     <div
       draggable={!disabled}
@@ -553,12 +559,15 @@ function DragLabel({ name, onDragStart, disabled }) {
         e.dataTransfer.setData("text/plain", name);
         onDragStart?.(name);
       }}
+      onClick={() => {
+        if (!disabled) onSelect?.(name);
+      }}
       className="px-5 py-2.5 rounded-xl font-bold text-sm select-none cursor-grab active:cursor-grabbing border-2 transition-all italic"
       style={{
-        backgroundColor: disabled ? C.beigeMid : C.green,
-        color: disabled ? "#7d94a3" : "white",
-        borderColor: disabled ? "#c9dade" : "#166F56",
-        boxShadow: disabled ? "none" : "0 3px 0 #166F56",
+        backgroundColor: disabled ? C.beigeMid : selected ? "#E7F4F3" : C.green,
+        color: disabled ? "#7d94a3" : selected ? "#0D4868" : "white",
+        borderColor: disabled ? "#c9dade" : selected ? "#30B5AE" : "#166F56",
+        boxShadow: disabled ? "none" : selected ? "0 0 0 2px #30B5AE" : "0 3px 0 #166F56",
         opacity: disabled ? 0.5 : 1,
         cursor: disabled ? "default" : undefined,
       }}
@@ -570,19 +579,12 @@ function DragLabel({ name, onDragStart, disabled }) {
 
 // ─── DROP ZONE ───
 
-function DropZone({ expected, value, onDrop, label }) {
+function DropZone({ expected, value, onDrop, label, selectedItem }) {
   const [hover, setHover] = useState(false);
   const [flash, setFlash] = useState(null);
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setHover(true);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setHover(false);
-    const data = e.dataTransfer.getData("text/plain");
+  // Shared handling for both a real drop and a tap with a selected item
+  const attempt = (data, e) => {
     if (data === expected) {
       onDrop(data, true, e);
       setFlash("correct");
@@ -594,12 +596,31 @@ function DropZone({ expected, value, onDrop, label }) {
     }
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setHover(true);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setHover(false);
+    attempt(e.dataTransfer.getData("text/plain"), e);
+  };
+
+  const selectable = !!selectedItem && !value;
+
+  const handleClick = (e) => {
+    if (!selectable) return;
+    attempt(selectedItem, e);
+  };
+
   return (
     <div
       onDragOver={handleDragOver}
       onDragLeave={() => setHover(false)}
       onDrop={handleDrop}
-      className="min-w-[100px] h-full rounded-xl flex items-center justify-center text-[11px] font-bold transition-all duration-200 border-2"
+      onClick={handleClick}
+      className="relative min-w-[100px] h-full rounded-xl flex items-center justify-center text-[11px] font-bold transition-all duration-200 border-2"
       style={{
         backgroundColor: value
           ? C.greenLight
@@ -614,18 +635,25 @@ function DropZone({ expected, value, onDrop, label }) {
           ? "#30B5AE"
           : flash === "incorrect"
           ? C.red
+          : selectable
+          ? "#30B5AE"
           : C.beigeMid,
         borderStyle: value ? "solid" : "dashed",
         color: value ? C.green : "#7d94a3",
+        cursor: selectable ? "pointer" : undefined,
       }}
     >
+      {/* Enlarged invisible tap area on touch devices; clicks bubble to the zone itself */}
+      {selectable && IS_COARSE && (
+        <div className="absolute" style={{ inset: -26 }} aria-hidden="true" />
+      )}
       {value ? (
         <span className="flex items-center gap-1" style={{ color: C.green }}>
           <CheckCircle className="w-3 h-3" />
           {value.charAt(0).toUpperCase() + value.slice(1)}
         </span>
       ) : (
-        <span style={{ color: "#7d94a3" }}>{label || "Sleep hier"}</span>
+        <span style={{ color: "#7d94a3" }}>{label || "Sleep of tik hier"}</span>
       )}
     </div>
   );
@@ -667,7 +695,7 @@ function ScaledStage({ designWidth, designHeight, className = "", children }) {
 
 // ─── PHASE TRIANGLE ───
 
-function PhaseTriangle({ transitions, answers, onDrop }) {
+function PhaseTriangle({ transitions, answers, onDrop, selectedItem }) {
   const W = 700, H = 600;
   const cx = W / 2, cy = H / 2 + 10;
   const triR = 235; // radius of the triangle (center to vertex)
@@ -796,7 +824,7 @@ function PhaseTriangle({ transitions, answers, onDrop }) {
               padding: "15px 20px",
             }}
           >
-            <DropZone expected={a.expected} value={answers[a.key]} onDrop={(v, c, e) => onDrop(a.key, v, c, e)} />
+            <DropZone expected={a.expected} value={answers[a.key]} selectedItem={selectedItem} onDrop={(v, c, e) => onDrop(a.key, v, c, e)} />
           </div>
         );
       })}
@@ -892,6 +920,7 @@ function IntroScreen({ title, text, children, buttonText, onNext }) {
 function M1R1({ onComplete, addScore, loseLife }) {
   const [answers, setAnswers] = useState({});
   const [showFeedback, setShowFeedback] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState(null);
 
   const transitions = [
     { from: "vast", to: "vloeibaar", expected: "smelten" },
@@ -911,6 +940,7 @@ function M1R1({ onComplete, addScore, loseLife }) {
   });
 
   const handleDrop = (key, value, correct, e) => {
+    setSelectedLabel(null);
     if (correct) {
       setAnswers((prev) => ({ ...prev, [key]: value }));
       addScore(5, e);
@@ -929,20 +959,29 @@ function M1R1({ onComplete, addScore, loseLife }) {
     <div className="flex-1 flex flex-col items-center px-2 py-6 sm:p-6">
       <h2 className="text-xl font-bold italic mb-2" style={{ color: C.brownText }}>Ronde 1: Basisovergangen</h2>
       <p className="text-sm mb-6 max-w-md text-center font-medium" style={{ color: C.brown }}>
-        <strong>Sleep</strong> het juiste woord naar de <strong>pijl</strong> tussen de twee toestanden.
+        <strong>Sleep</strong> het juiste woord naar de <strong>pijl</strong>, of <strong>tik</strong> eerst het woord en dan de pijl aan.
       </p>
 
       <PhaseTriangle
         transitions={transitions}
         answers={answers}
         onDrop={handleDrop}
+        selectedItem={selectedLabel}
       />
 
       {/* Draggable label — one at a time */}
       <div className="flex gap-3 flex-wrap justify-center">
         {(() => {
           const nextLabel = labels.find((l) => !placedLabels.includes(l));
-          return nextLabel ? <DragLabel key={nextLabel} name={nextLabel} /> : null;
+          return nextLabel ? (
+            <DragLabel
+              key={nextLabel}
+              name={nextLabel}
+              selected={selectedLabel === nextLabel}
+              onSelect={(n) => setSelectedLabel((prev) => (prev === n ? null : n))}
+              onDragStart={() => setSelectedLabel(null)}
+            />
+          ) : null;
         })()}
       </div>
 
@@ -962,6 +1001,7 @@ function M1R1({ onComplete, addScore, loseLife }) {
 function M1R2({ onComplete, addScore, loseLife }) {
   const [answers, setAnswers] = useState({});
   const [showFeedback, setShowFeedback] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState(null);
 
   const transitions = [
     { from: "vast", to: "vloeibaar", expected: "smelten" },
@@ -977,6 +1017,7 @@ function M1R2({ onComplete, addScore, loseLife }) {
   const allCorrect = transitions.every((t) => answers[`${t.from}-${t.to}`] === t.expected);
 
   const handleDrop = (key, value, correct, e) => {
+    setSelectedLabel(null);
     if (correct) {
       setAnswers((prev) => ({ ...prev, [key]: value }));
       addScore(3, e);
@@ -995,20 +1036,29 @@ function M1R2({ onComplete, addScore, loseLife }) {
     <div className="flex-1 flex flex-col items-center px-2 py-6 sm:p-6">
       <h2 className="text-xl font-bold italic mb-2" style={{ color: C.brownText }}>Ronde 2: Alle zes faseovergangen</h2>
       <p className="text-sm mb-6 max-w-md text-center font-medium" style={{ color: C.brown }}>
-        Nu <strong>alle zes</strong>! Sleep elk woord naar de <strong>juiste pijl</strong>.
+        Nu <strong>alle zes</strong>! Sleep elk woord naar de <strong>juiste pijl</strong>, of <strong>tik</strong> eerst het woord en dan de pijl aan.
       </p>
 
       <PhaseTriangle
         transitions={transitions}
         answers={answers}
         onDrop={handleDrop}
+        selectedItem={selectedLabel}
       />
 
       {/* Label — one at a time */}
       <div className="flex gap-3 flex-wrap justify-center">
         {(() => {
           const nextLabel = labels.find((l) => !placedLabels.includes(l));
-          return nextLabel ? <DragLabel key={nextLabel} name={nextLabel} /> : null;
+          return nextLabel ? (
+            <DragLabel
+              key={nextLabel}
+              name={nextLabel}
+              selected={selectedLabel === nextLabel}
+              onSelect={(n) => setSelectedLabel((prev) => (prev === n ? null : n))}
+              onDragStart={() => setSelectedLabel(null)}
+            />
+          ) : null;
         })()}
       </div>
 
@@ -1029,6 +1079,7 @@ function M1R3({ onComplete, addScore, loseLife }) {
   const [absorbs, setAbsorbs] = useState([]);
   const [releases, setReleases] = useState([]);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState(null);
 
   const items = [
     { name: "smelten", shouldAbsorb: true },
@@ -1042,12 +1093,12 @@ function M1R3({ onComplete, addScore, loseLife }) {
   const placed = [...absorbs, ...releases];
   const allPlaced = placed.length === 6;
 
-  const handleDrop = (column, e) => {
-    e.preventDefault();
-    const name = e.dataTransfer.getData("text/plain");
+  // Shared placement logic for drop and tap; identical validation and scoring
+  const placeItem = (column, name, e) => {
     const item = items.find((i) => i.name === name);
     if (!item) return;
 
+    setSelectedLabel(null);
     setAbsorbs((prev) => prev.filter((n) => n !== name));
     setReleases((prev) => prev.filter((n) => n !== name));
 
@@ -1060,6 +1111,20 @@ function M1R3({ onComplete, addScore, loseLife }) {
       loseLife();
     }
   };
+
+  const handleDrop = (column, e) => {
+    e.preventDefault();
+    placeItem(column, e.dataTransfer.getData("text/plain"), e);
+  };
+
+  const handleColumnClick = (column, e) => {
+    if (!selectedLabel) return;
+    placeItem(column, selectedLabel, e);
+  };
+
+  const columnTapStyle = selectedLabel
+    ? { outline: "2px dashed #30B5AE", outlineOffset: "3px", cursor: "pointer" }
+    : {};
 
   useEffect(() => {
     if (allPlaced) {
@@ -1080,16 +1145,17 @@ function M1R3({ onComplete, addScore, loseLife }) {
     <div className="flex-1 flex flex-col items-center p-6">
       <h2 className="text-xl font-bold italic mb-2" style={{ color: C.brownText }}>Ronde 3: Energie richting</h2>
       <p className="text-sm mb-6 max-w-md text-center font-medium" style={{ color: C.brown }}>
-        Sleep elke <strong>faseovergang</strong> naar de <strong>juiste kolom</strong>.
+        Sleep elke <strong>faseovergang</strong> naar de <strong>juiste kolom</strong>, of <strong>tik</strong> eerst het woord en dan de kolom aan.
       </p>
 
       <div className="flex gap-4 mb-6 w-full max-w-lg">
         {/* Absorbs column */}
         <div
           className="flex-1 border-3 rounded-2xl p-4 min-h-[200px]"
-          style={{ ...columnStyle(C.red), borderWidth: "3px" }}
+          style={{ ...columnStyle(C.red), borderWidth: "3px", ...columnTapStyle }}
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => handleDrop("absorbs", e)}
+          onClick={(e) => handleColumnClick("absorbs", e)}
         >
           <div className="flex items-center gap-2 mb-3 justify-center">
             <Flame className="w-5 h-5" style={{ color: C.red }} />
@@ -1114,9 +1180,10 @@ function M1R3({ onComplete, addScore, loseLife }) {
         {/* Releases column */}
         <div
           className="flex-1 border-3 rounded-2xl p-4 min-h-[200px]"
-          style={{ ...columnStyle("#2E86C1"), borderWidth: "3px", backgroundColor: "#EBF5FB" }}
+          style={{ ...columnStyle("#2E86C1"), borderWidth: "3px", backgroundColor: "#EBF5FB", ...columnTapStyle }}
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => handleDrop("releases", e)}
+          onClick={(e) => handleColumnClick("releases", e)}
         >
           <div className="flex items-center gap-2 mb-3 justify-center">
             <Snowflake className="w-5 h-5 text-blue-500" />
@@ -1142,7 +1209,14 @@ function M1R3({ onComplete, addScore, loseLife }) {
       {/* Draggable items */}
       <div className="flex gap-2 flex-wrap justify-center">
         {items.map(({ name }) => (
-          <DragLabel key={name} name={name} disabled={placed.includes(name)} />
+          <DragLabel
+            key={name}
+            name={name}
+            disabled={placed.includes(name)}
+            selected={selectedLabel === name}
+            onSelect={(n) => setSelectedLabel((prev) => (prev === n ? null : n))}
+            onDragStart={() => setSelectedLabel(null)}
+          />
         ))}
       </div>
 
@@ -1592,7 +1666,7 @@ function M2R2({ onComplete, addScore, loseLife }) {
     <div className="flex-1 flex flex-col items-center p-6">
       <h2 className="text-xl font-bold italic mb-2" style={{ color: C.brownText }}>Ronde 2: Zelf energie stapelen</h2>
       <p className="text-sm mb-4 max-w-md text-center font-medium" style={{ color: C.brown }}>
-        Sleep <strong>energieblokjes</strong> naar de balk om 1 kg ijs helemaal naar <strong>stoom</strong> te brengen.
+        Vul de balk met <strong>energieblokjes</strong> om 1 kg ijs helemaal naar <strong>stoom</strong> te brengen. Tik of klik op de <strong>+</strong> en <strong>-</strong> knoppen.
       </p>
 
       <div className="rounded-xl px-4 py-2 mb-4 text-sm font-bold border-2 italic" style={{ backgroundColor: C.bgCard, borderColor: C.brownText, color: C.brownText }}>
@@ -1637,7 +1711,7 @@ function M2R2({ onComplete, addScore, loseLife }) {
               </div>
             ))}
             {blocksPlaced > 80 && <span className="text-xs font-bold" style={{ color: C.brown }}>+{blocksPlaced - 80}</span>}
-            {blocksPlaced === 0 && <span className="text-xs" style={{ color: "#7d94a3" }}>Sleep blokjes hierheen of gebruik +/-</span>}
+            {blocksPlaced === 0 && <span className="text-xs" style={{ color: "#7d94a3" }}>Voeg blokjes toe met de + en - knoppen</span>}
           </div>
         </div>
 
