@@ -178,7 +178,16 @@ function ConfettiBurst({ x, y, onDone }) {
 // ─── STREAK INDICATOR ───
 
 function StreakIndicator({ streak }) {
-  if (streak < 2) return null;
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (streak < 2) { setVisible(false); return; }
+    setVisible(true);
+    const timer = setTimeout(() => setVisible(false), 1500);
+    return () => clearTimeout(timer);
+  }, [streak]);
+
+  if (!visible) return null;
   return (
     <div className="fixed top-20 right-4 z-[90] animate-bounce">
       <div className="rounded-xl px-4 py-2 shadow-lg border-2 font-bold italic text-sm"
